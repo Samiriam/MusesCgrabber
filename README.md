@@ -116,8 +116,16 @@ Si aparece un CAPTCHA de Cloudflare:
 - ✅ Chrome (recomendado)
 - ✅ Edge
 - ✅ Brave
-- ⚠️ Firefox (puede tener limitaciones)
+- ✅ Firefox (v109 o superior)
 - ❌ Safari (no soportado)
+
+### Notas para Firefox
+
+Firefox requiere Manifest V3 con algunas diferencias:
+- La extensión incluye `browser_specific_settings` para gecko
+- El service worker se ejecuta como script de fondo
+- Algunas APIs pueden tener comportamiento ligeramente diferente
+- Para desarrollo, usa `about:debugging#/runtime/this-firefox`
 
 ## Notas Importantes
 
