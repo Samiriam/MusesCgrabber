@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Score Grabber</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <h1 class="title">Score Grabber</h1>
+      <button id="btn-debug" class="btn-icon" title="Toggle debug">🔧</button>
+    </div>
+
+    <div id="loading" class="message">
+      <p>Loading...</p>
+    </div>
+
+    <div id="error" class="message" style="display: none;">
+      <p id="error-text"></p>
+    </div>
+
+    <div id="content" style="display: none;">
+      <div class="score-info">
+        <p id="score-title" class="score-title"></p>
+        <p id="score-composer" class="score-composer"></p>
+        <p id="score-id-display" class="score-id"></p>
+      </div>
+
+      <div id="status" class="status" style="display: none;">
+        <p id="status-text"></p>
+      </div>
+
+      <div class="buttons">
+        <button id="btn-midi" class="btn">Download MIDI</button>
+        <button id="btn-mp3" class="btn">Download MP3</button>
+        <button id="btn-pdf" class="btn">Download PDF</button>
+        <button id="btn-sheet" class="btn btn-secondary">Open Sheet</button>
+      </div>
+    </div>
+
+    <div id="debug-panel" class="debug-panel" style="display: none;">
+      <div class="debug-header">
+        <h3>Debug Log</h3>
+        <button id="btn-clear-log" class="btn-small">Clear</button>
+      </div>
+      <div id="debug-log" class="debug-log"></div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

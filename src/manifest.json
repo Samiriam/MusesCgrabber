@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Score Grabber",
+  "version": "1.0.0",
+  "description": "Download sheet music from MuseScore",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://musescore.com/*", "https://*.musescore.com/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_start"
+    }
+  ],
+  "permissions": ["webRequest", "storage", "activeTab"],
+  "web_accessible_resources": [
+    {
+      "resources": ["sandbox.html", "pdfmake.min.js", "vfs_fonts.js"],
+      "matches": ["https://*.musescore.com/*"]
+    }
+  ],
+  "sandbox": {
+    "pages": ["sandbox.html"]
+  }
+}
