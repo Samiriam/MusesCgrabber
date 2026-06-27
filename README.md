@@ -18,12 +18,16 @@ Extensión de navegador para descargar partituras de MuseScore.
 3. Hacer clic en "Cargar extensión descomprimida"
 4. Seleccionar la carpeta `src`
 
-### Firefox
+### Firefox (Modo Desarrollo)
 
-1. Descargar `score-grabber-firefox.xpi`
-2. Abrir Firefox
-3. Arrastrar el archivo XPI a la ventana de Firefox
-4. Confirmar la instalación
+1. Abrir `about:config`
+2. Buscar `xpinstall.signatures.required` y poner en `false`
+3. Reiniciar Firefox
+4. Abrir `about:debugging#/runtime/this-firefox`
+5. Hacer clic en "Cargar complemento temporal..."
+6. Seleccionar `firefox/manifest.json`
+
+**Nota:** Firefox requiere extensiones firmadas. Para desarrollo, se usa este modo temporal.
 
 ## Uso
 
