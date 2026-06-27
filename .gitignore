@@ -27,5 +27,8 @@ Thumbs.db
 # Private work logs
 PLAN_TRABAJO.md
 
+# Build scripts
+create-xpi.ps1
+
 # Firefox build (se genera desde src)
 firefox/
