@@ -4,7 +4,14 @@ Extensión de navegador para descargar partituras de MuseScore.
 
 ## Instalación
 
-### Chrome/Edge
+### Chrome/Edge (desde archivo ZIP)
+
+1. Descargar `score-grabber-chrome.zip`
+2. Abrir `chrome://extensions/`
+3. Habilitar "Modo desarrollador"
+4. Arrastrar el archivo ZIP a la ventana de Chrome
+
+### Chrome/Edge (desde código fuente)
 
 1. Abrir `chrome://extensions/`
 2. Habilitar "Modo desarrollador"
@@ -13,9 +20,10 @@ Extensión de navegador para descargar partituras de MuseScore.
 
 ### Firefox
 
-1. Abrir `about:debugging#/runtime/this-firefox`
-2. Hacer clic en "Cargar complemento temporal"
-3. Seleccionar `firefox/manifest.json`
+1. Descargar `score-grabber-firefox.xpi`
+2. Abrir Firefox
+3. Arrastrar el archivo XPI a la ventana de Firefox
+4. Confirmar la instalación
 
 ## Uso
 
