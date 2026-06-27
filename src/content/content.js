@@ -1,4 +1,4 @@
-// Content Script - Score Grabber v11 (with PDF generation)
+// Script de Contenido - Score Grabber v11 (con generación de PDF)
 
 (function() {
   'use strict';
@@ -43,37 +43,37 @@
     initTokenAlgorithm();
     loadPdfMake();
     isInitialized = true;
-    popupLog('Init. scoreId=' + scoreId, 'info');
+    popupLog('Inicio. scoreId=' + scoreId, 'info');
   }
 
   function loadPdfMake() {
     if (typeof pdfMake !== 'undefined') {
       pdfMakeLoaded = true;
-      popupLog('pdfmake already loaded', 'success');
+      popupLog('pdfmake ya cargado', 'success');
       return;
     }
-    // Load pdfmake from local extension files
+    // Cargar pdfmake desde archivos locales de la extensión
     var script = document.createElement('script');
     script.src = chrome.runtime.getURL('pdfmake.min.js');
     script.onload = function() {
-      popupLog('pdfmake.min.js loaded, checking...', 'info');
-      // Check immediately if pdfMake is available
+      popupLog('pdfmake.min.js cargado, verificando...', 'info');
+      // Verificar inmediatamente si pdfMake está disponible
       if (typeof pdfMake !== 'undefined') {
         pdfMakeLoaded = true;
-        popupLog('pdfmake ready (no fonts)', 'success');
+        popupLog('pdfmake listo (sin fuentes)', 'success');
       } else {
-        // Load fonts
+        // Cargar fuentes
         var vfsScript = document.createElement('script');
         vfsScript.src = chrome.runtime.getURL('vfs_fonts.js');
         vfsScript.onload = function() {
           pdfMakeLoaded = true;
-          popupLog('pdfmake ready (with fonts)', 'success');
+          popupLog('pdfmake listo (con fuentes)', 'success');
         };
         document.head.appendChild(vfsScript);
       }
     };
     script.onerror = function() {
-      popupLog('Failed to load pdfmake', 'error');
+      popupLog('Error al cargar pdfmake', 'error');
     };
     document.head.appendChild(script);
   }
@@ -153,7 +153,7 @@
             var index = p.get('index') || '0';
             if (id && type) {
               capturedTokens[id + '_' + type + '_' + index] = auth;
-              popupLog('Captured token: ' + type + ' for ' + id, 'success');
+              popupLog('Token capturado: ' + type + ' para ' + id, 'success');
             }
           } catch (e) {}
         }
@@ -162,7 +162,7 @@
     };
   }
 
-  // ============ TOKEN ALGORITHM ============
+  // ============ ALGORITMO DE TOKENS ============
 
   function getScriptUrlFromDocument() {
     var links = document.querySelectorAll('link');
@@ -176,13 +176,13 @@
 
   function initTokenAlgorithm() {
     var url = getScriptUrlFromDocument();
-    if (!url) { popupLog('No MuseScore script found', 'error'); return; }
-    popupLog('Found script: ' + url.substring(0, 60) + '...', 'info');
+    if (!url) { popupLog('No se encontró script de MuseScore', 'error'); return; }
+    popupLog('Script encontrado: ' + url.substring(0, 60) + '...', 'info');
     fetch(url).then(function(r) { return r.text(); }).then(function(scriptText) {
-      if (!scriptText) { popupLog('Script is empty', 'error'); return; }
-      popupLog('Script loaded, size: ' + scriptText.length, 'info');
+      if (!scriptText) { popupLog('El script está vacío', 'error'); return; }
+      popupLog('Script cargado, tamaño: ' + scriptText.length, 'info');
       var m = scriptText.match(/"([\W\w]{1,50})"\)\.substr\(0, *4\)/);
-      if (!m) { popupLog('randomToken not found', 'error'); return; }
+      if (!m) { popupLog('No se encontró randomToken', 'error'); return; }
       randomToken = m[1];
       popupLog('randomToken: ' + randomToken, 'success');
       var parts = scriptText.split(/, *(\d+): *(?:function)*\([\w,]{1,8}\)(?: *=> *|)\{/);
@@ -193,17 +193,17 @@
           break;
         }
       }
-      if (!fn) { popupLog('MD5 function not found', 'error'); return; }
-      popupLog('MD5 function found: #' + fn, 'success');
+      if (!fn) { popupLog('No se encontró función MD5', 'error'); return; }
+      popupLog('Función MD5 encontrada: #' + fn, 'success');
       var start = '(function (modules) { var installedModules = {}; function __webpack_require__(m) { if (installedModules[m]) return installedModules[m].exports; var module = installedModules[m] = { i: m, l: false, exports: {} }; modules[m].call(module.exports, module, module.exports, __webpack_require__); module.l = true; return module.exports; } __webpack_require__.m = modules; __webpack_require__.c = installedModules; return __webpack_require__(__webpack_require__.s = ' + fn + '); })(';
       var s = scriptText.replace(/\(self\.[^}]*(?=\{(\d+):)/, start);
       s = s.replace(/}}]\)/, '}})');
       s = s.replace(/_digestsize=(\d+),\w+\.exports=function\(/,
         function(match, a) { return '_digestsize=' + a + ',window.generateToken=function('; });
       tokenScript = s;
-      popupLog('Script modified, preparing sandbox...', 'info');
+      popupLog('Script modificado, preparando sandbox...', 'info');
       prepareSandbox();
-    }).catch(function(e) { popupLog('Script fetch error: ' + e.message, 'error'); });
+    }).catch(function(e) { popupLog('Error al obtener script: ' + e.message, 'error'); });
   }
 
   function prepareSandbox() {
@@ -213,28 +213,28 @@
     document.body.appendChild(iframe);
     sandboxFrame = iframe;
     iframe.onload = function() {
-      popupLog('Sandbox loaded', 'info');
+      popupLog('Sandbox cargado', 'info');
       var handler = function(e) {
         if (typeof e.data === 'object' && e.data.msdExecuteScript !== undefined) {
           window.removeEventListener('message', handler);
           var success = e.data.msdExecuteScript;
           tokenReady = success;
-          if (success) { popupLog('Token algorithm ready!', 'success'); }
-          else { popupLog('Token algorithm FAILED', 'error'); tokenError = 'Script execution returned false'; }
+          if (success) { popupLog('¡Algoritmo de tokens listo!', 'success'); }
+          else { popupLog('Algoritmo de tokens FALLÓ', 'error'); tokenError = 'La ejecución del script devolvió false'; }
         }
       };
       window.addEventListener('message', handler);
       sandboxFrame.contentWindow.postMessage({ executeScript: { script: tokenScript, randomToken: randomToken } }, '*');
     };
     setTimeout(function() {
-      if (!tokenReady) { popupLog('Sandbox timeout', 'error'); tokenError = 'Sandbox timeout'; }
+      if (!tokenReady) { popupLog('Timeout del sandbox', 'error'); tokenError = 'Timeout del sandbox'; }
     }, 15000);
   }
 
   function generateTokenWithAlgorithm(id, type, index) {
     index = index || 0;
     if (!tokenReady || !sandboxFrame) return Promise.resolve(null);
-    popupLog('Generating token: ' + id + ' ' + type + ' ' + index, 'info');
+    popupLog('Generando token: ' + id + ' ' + type + ' ' + index, 'info');
     return new Promise(function(resolve) {
       var handler = function(e) {
         if (typeof e.data === 'object' && e.data.msdGenerateToken !== undefined) {
@@ -242,44 +242,44 @@
           clearTimeout(safety);
           var token = e.data.msdGenerateToken;
           if (token) { popupLog('Token: ' + token, 'success'); resolve(token); }
-          else { popupLog('Token generation returned null', 'error'); resolve(null); }
+          else { popupLog('La generación de token devolvió null', 'error'); resolve(null); }
         }
       };
       window.addEventListener('message', handler);
       var safety = setTimeout(function() {
         window.removeEventListener('message', handler);
-        popupLog('Token generation timeout', 'error');
+        popupLog('Timeout en generación de token', 'error');
         resolve(null);
       }, 2000);
       sandboxFrame.contentWindow.postMessage({ generateToken: { id: id, type: type, index: index } }, '*');
     });
   }
 
-  // ============ MAIN FETCH ============
+  // ============ OBTENCIÓN PRINCIPAL ============
 
   function fetchApiUrl(id, token, type, index) {
     var url = 'https://musescore.com/api/jmuse?id=' + id + '&index=' + index + '&type=' + type;
-    popupLog('Calling API: ' + url, 'info');
+    popupLog('Llamando API: ' + url, 'info');
     popupLog('Token: ' + token, 'info');
     popupLog('Headers: { Authorization: ' + token + ' }', 'info');
     return fetch(url, {
       headers: { Authorization: token },
       referrer: window.location.href
     }).then(function(r) {
-      popupLog('API response: ' + r.status + ' ' + r.statusText, r.ok ? 'success' : 'error');
+      popupLog('Respuesta API: ' + r.status + ' ' + r.statusText, r.ok ? 'success' : 'error');
       if (!r.ok) {
         return r.text().then(function(text) {
-          popupLog('API error body: ' + text.substring(0, 200), 'error');
+          popupLog('Cuerpo de error API: ' + text.substring(0, 200), 'error');
           return null;
         });
       }
       return r.json();
     }).then(function(d) {
       if (d && d.info && d.info.url) {
-        popupLog('Got URL: ' + d.info.url.substring(0, 50) + '...', 'success');
+        popupLog('URL obtenida: ' + d.info.url.substring(0, 50) + '...', 'success');
         return d.info.url;
       }
-      popupLog('No URL in API response: ' + JSON.stringify(d), 'error');
+      popupLog('No hay URL en respuesta API: ' + JSON.stringify(d), 'error');
       return null;
     });
   }
@@ -301,7 +301,7 @@
 
   function downloadFile(url, filename) {
     return fetch(url).then(function(r) {
-      if (!r.ok) throw new Error('Download failed: ' + r.status);
+      if (!r.ok) throw new Error('Descarga fallida: ' + r.status);
       return r.blob();
     }).then(function(blob) {
       var blobUrl = URL.createObjectURL(blob);
@@ -316,79 +316,79 @@
     });
   }
 
-  // ============ PDF GENERATION ============
+  // ============ GENERACIÓN DE PDF ============
 
   function getPageCount() {
     var pageCount = 0;
     
-    // Method 1: Look for "X of Y pages" pattern (exact match from original)
+    // Método 1: Buscar patrón "X de Y páginas" (coincidencia exacta del original)
     try {
       var bodyHTML = document.body ? document.body.outerHTML : '';
       var pagesMatch = bodyHTML.match(/\d+ of (\d+) pages/);
       if (pagesMatch) {
         pageCount = Number(pagesMatch[1]);
-        popupLog('Page count from "X of Y pages": ' + pageCount, 'info');
+        popupLog('Conteo de páginas desde "X of Y pages": ' + pageCount, 'info');
         if (pageCount > 0) return pageCount;
       }
     } catch (e) {}
     
-    // Method 2: Look for "Pages" in HTML structure (exact match from original)
+    // Método 2: Buscar "Pages" en estructura HTML (coincidencia exacta del original)
     try {
       var pagesMatch2 = document.querySelector('body').outerHTML.match(/Pages<\/h3><\/th><td><div[\w ="]+>(\d+)/);
       if (pagesMatch2) {
         pageCount = Number(pagesMatch2[1]);
-        popupLog('Page count from Pages structure: ' + pageCount, 'info');
+        popupLog('Conteo de páginas desde estructura Pages: ' + pageCount, 'info');
         if (pageCount > 0) return pageCount;
       }
     } catch (e) {}
     
-    // Method 3: Count divs in scroller (exact match from original)
+    // Método 3: Contar divs en scroller (coincidencia exacta del original)
     try {
       var scroller = document.querySelector('#jmuse-scroller-component');
       if (scroller && scroller.firstChild && scroller.firstChild.classList && scroller.firstChild.classList[0]) {
         var className = scroller.firstChild.classList[0];
         pageCount = document.querySelectorAll('.' + className).length;
-        popupLog('Page count from scroller class "' + className + '": ' + pageCount, 'info');
+        popupLog('Conteo de páginas desde clase scroller "' + className + '": ' + pageCount, 'info');
         if (pageCount > 0) return pageCount;
       }
     } catch (e) {}
     
-    // Method 4: Look for window.UGAPP
+    // Método 4: Buscar window.UGAPP
     try {
       if (window.UGAPP && window.UGAPP.store && window.UGAPP.store.page && window.UGAPP.store.page.data) {
         var scoreData = window.UGAPP.store.page.data.score;
         if (scoreData && scoreData.pages_count) {
           pageCount = scoreData.pages_count;
-          popupLog('Page count from UGAPP: ' + pageCount, 'info');
+          popupLog('Conteo de páginas desde UGAPP: ' + pageCount, 'info');
           if (pageCount > 0) return pageCount;
         }
       }
     } catch (e) {}
     
-    // Method 5: Count all images with score_ pattern
+    // Método 5: Contar todas las imágenes con patrón score_
     try {
       var scoreImages = document.querySelectorAll('img[src*="score_"]');
       if (scoreImages.length > 0) {
         pageCount = scoreImages.length;
-        popupLog('Page count from score images: ' + pageCount, 'info');
+        popupLog('Conteo de páginas desde imágenes score: ' + pageCount, 'info');
         if (pageCount > 0) return pageCount;
       }
     } catch (e) {}
     
-    // Method 6: Count link elements with image type
+    // Método 6: Contar elementos link con tipo imagen
     try {
       var imageLinks = document.querySelectorAll('link[as="image"]');
       if (imageLinks.length > 0) {
         pageCount = imageLinks.length;
-        popupLog('Page count from link[as="image"]: ' + pageCount, 'info');
+        popupLog('Conteo de páginas desde link[as="image"]: ' + pageCount, 'info');
         if (pageCount > 0) return pageCount;
       }
     } catch (e) {}
     
-    // Default fallback
+    // Valor por defecto
     if (pageCount === 0) {
       pageCount = 1;
-      popupLog('Could not detect page count, using default: 1', 'warn');
+      popupLog('No se pudo detectar conteo de páginas, usando valor por defecto: 1', 'warn');
     }
     
     return pageCount;
@@ -396,25 +396,25 @@
 
   function fetchImageAsBase64(url) {
     return fetch(url).then(function(r) {
-      if (!r.ok) throw new Error('Failed to fetch image');
+      if (!r.ok) throw new Error('Error al obtener imagen');
       var contentType = r.headers.get('content-type');
-      popupLog('Image content-type: ' + contentType, 'info');
+      popupLog('Content-type de imagen: ' + contentType, 'info');
       return r.blob();
     }).then(function(blob) {
-      popupLog('Image blob type: ' + blob.type + ', size: ' + blob.size, 'info');
+      popupLog('Tipo de blob imagen: ' + blob.type + ', tamaño: ' + blob.size, 'info');
       
-      // If SVG, convert to PNG using canvas
+      // Si es SVG, convertir a PNG usando canvas
       if (blob.type === 'image/svg+xml' || blob.type === 'image/svg') {
-        popupLog('Converting SVG to PNG...', 'info');
+        popupLog('Convirtiendo SVG a PNG...', 'info');
         return svgToPng(blob);
       }
       
-      // If PNG or JPEG, convert directly to data URL
+      // Si es PNG o JPEG, convertir directamente a data URL
       return new Promise(function(resolve, reject) {
         var reader = new FileReader();
         reader.onloadend = function() {
           var result = reader.result;
-          popupLog('Image data URL prefix: ' + result.substring(0, 50), 'info');
+          popupLog('Prefijo data URL de imagen: ' + result.substring(0, 50), 'info');
           resolve(result);
         };
         reader.onerror = reject;
@@ -436,12 +436,12 @@
           var ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0);
           var pngDataUrl = canvas.toDataURL('image/png');
-          popupLog('SVG converted to PNG: ' + pngDataUrl.substring(0, 50), 'success');
+          popupLog('SVG convertido a PNG: ' + pngDataUrl.substring(0, 50), 'success');
           resolve(pngDataUrl);
         };
         img.onerror = function() {
-          popupLog('Failed to load SVG for conversion', 'error');
-          reject(new Error('SVG load failed'));
+          popupLog('Error al cargar SVG para conversión', 'error');
+          reject(new Error('Error al cargar SVG'));
         };
         img.src = svgDataUrl;
       };
@@ -451,61 +451,61 @@
   }
 
   function downloadPdfWithPages(scoreId, fileName, cb) {
-    popupLog('Checking pdfmake status...', 'info');
+    popupLog('Verificando estado de pdfmake...', 'info');
     popupLog('pdfMakeLoaded=' + pdfMakeLoaded + ', pdfMake=' + (typeof pdfMake), 'info');
     
     if (typeof pdfMake === 'undefined' || !pdfMakeLoaded) {
-      popupLog('pdfmake not loaded yet, waiting... (pdfMakeLoaded=' + pdfMakeLoaded + ', typeof pdfMake=' + (typeof pdfMake) + ')', 'warn');
+      popupLog('pdfmake aún no cargado, esperando... (pdfMakeLoaded=' + pdfMakeLoaded + ', typeof pdfMake=' + (typeof pdfMake) + ')', 'warn');
       setTimeout(function() { downloadPdfWithPages(scoreId, fileName, cb); }, 500);
       return;
     }
 
     var pageCount = getPageCount();
-    popupLog('Starting PDF download, pages: ' + pageCount, 'info');
+    popupLog('Iniciando descarga PDF, páginas: ' + pageCount, 'info');
 
-    // Try to get first page URL directly from page (not API)
+    // Intentar obtener URL de primera página directamente desde la página (no API)
     var firstPageUrl = null;
     
-    // Method 1: Get from link[as="image"]
+    // Método 1: Obtener desde link[as="image"]
     var imageLink = document.querySelector('link[as="image"]');
     if (imageLink && imageLink.href) {
       firstPageUrl = imageLink.href.split('@')[0];
-      popupLog('First page from link: ' + firstPageUrl.substring(0, 50), 'info');
+      popupLog('Primera página desde link: ' + firstPageUrl.substring(0, 50), 'info');
     }
     
-    // Method 2: Get from img[src*="score_0"]
+    // Método 2: Obtener desde img[src*="score_0"]
     if (!firstPageUrl) {
       var firstImg = document.querySelector('img[src*="score_0"]');
       if (firstImg && firstImg.src) {
         firstPageUrl = firstImg.src.split('@')[0];
-        popupLog('First page from img: ' + firstPageUrl.substring(0, 50), 'info');
+        popupLog('Primera página desde img: ' + firstPageUrl.substring(0, 50), 'info');
       }
     }
     
-    // Method 3: Get from thumbnailUrl in JSON-LD
+    // Método 3: Obtener desde thumbnailUrl en JSON-LD
     if (!firstPageUrl && firstImage) {
       firstPageUrl = firstImage.split('@')[0];
-      popupLog('First page from thumbnail: ' + firstPageUrl.substring(0, 50), 'info');
+      popupLog('Primera página desde thumbnail: ' + firstPageUrl.substring(0, 50), 'info');
     }
     
     if (!firstPageUrl) {
-      cb({ success: false, error: 'Could not get first page URL' });
+      cb({ success: false, error: 'No se pudo obtener URL de primera página' });
       return;
     }
 
-    popupLog('First page URL obtained, downloading all pages with delays...', 'info');
+    popupLog('URL de primera página obtenida, descargando todas las páginas con demoras...', 'info');
 
-    // Download pages sequentially with delays to avoid CAPTCHA
+    // Descargar páginas secuencialmente con demoras para evitar CAPTCHA
     var allImages = [];
     
     function downloadPage(index) {
       if (index >= pageCount) {
-        // All pages downloaded, generate PDF
+        // Todas las páginas descargadas, generar PDF
         generatePdfFromImages(allImages, fileName, cb);
         return;
       }
       
-      popupLog('Downloading page ' + (index + 1) + '/' + pageCount + '...', 'info');
+      popupLog('Descargando página ' + (index + 1) + '/' + pageCount + '...', 'info');
       
       var imagePromise;
       if (index === 0) {
@@ -520,38 +520,38 @@
       imagePromise.then(function(img) {
         if (img) {
           allImages.push(img);
-          popupLog('Page ' + (index + 1) + ' downloaded', 'success');
+          popupLog('Página ' + (index + 1) + ' descargada', 'success');
         } else {
-          popupLog('Page ' + (index + 1) + ' failed (CAPTCHA?)', 'warn');
+          popupLog('Página ' + (index + 1) + ' falló (¿CAPTCHA?)', 'warn');
         }
         
-        // Delay before next page (2 seconds to avoid CAPTCHA)
+        // Demora antes de siguiente página (2 segundos para evitar CAPTCHA)
         setTimeout(function() {
           downloadPage(index + 1);
         }, 2000);
       }).catch(function(e) {
-        popupLog('Page ' + (index + 1) + ' error: ' + e.message, 'error');
+        popupLog('Error en página ' + (index + 1) + ': ' + e.message, 'error');
         setTimeout(function() {
           downloadPage(index + 1);
         }, 2000);
       });
     }
     
-    // Start downloading pages
+    // Iniciar descarga de páginas
     downloadPage(0);
   }
 
   function generatePdfFromImages(images, fileName, cb) {
-    popupLog('Downloaded ' + images.length + ' pages', 'success');
+    popupLog('Descargadas ' + images.length + ' páginas', 'success');
 
     var validImages = images.filter(function(img) { return img !== null; });
 
     if (validImages.length === 0) {
-      cb({ success: false, error: 'No images downloaded' });
+      cb({ success: false, error: 'No se descargaron imágenes' });
       return;
     }
 
-    popupLog('Generating PDF...', 'info');
+    popupLog('Generando PDF...', 'info');
 
     var content = [];
     for (var j = 0; j < validImages.length; j++) {
@@ -578,25 +578,25 @@
     try {
       var pdfDoc = pdfMake.createPdf(docDefinition);
       pdfDoc.download(fileName + '.pdf', function() {
-        popupLog('PDF downloaded successfully!', 'success');
-        cb({ success: true, message: 'PDF downloaded (' + validImages.length + ' pages)' });
+        popupLog('¡PDF descargado exitosamente!', 'success');
+        cb({ success: true, message: 'PDF descargado (' + validImages.length + ' páginas)' });
       });
     } catch (e) {
-      popupLog('PDF generation error: ' + e.message, 'error');
-      cb({ success: false, error: 'PDF generation failed: ' + e.message });
+      popupLog('Error en generación PDF: ' + e.message, 'error');
+      cb({ success: false, error: 'Falló generación PDF: ' + e.message });
     }
   }
 
-  // ============ ACTIONS ============
+  // ============ ACCIONES ============
 
   function handleAction(action, cb) {
-    popupLog('Action: ' + action, 'info');
-    if (!scoreId) { cb({ success: false, error: 'No score detected' }); return; }
+    popupLog('Acción: ' + action, 'info');
+    if (!scoreId) { cb({ success: false, error: 'No se detectó partitura' }); return; }
 
-    // Send immediate response to prevent channel timeout
-    cb({ success: true, message: 'Processing...' });
+    // Enviar respuesta inmediata para evitar timeout de canal
+    cb({ success: true, message: 'Procesando...' });
 
-    // Then do the work asynchronously
+    // Luego ejecutar el trabajo de forma asíncrona
     setTimeout(function() {
       doAction(action);
     }, 100);
@@ -607,8 +607,8 @@
 
     if (action === 'downloadPdf') {
       downloadPdfWithPages(scoreId, fn, function(result) {
-        popupLog('PDF result: ' + JSON.stringify(result), result.success ? 'success' : 'error');
-        // Send notification to popup
+        popupLog('Resultado PDF: ' + JSON.stringify(result), result.success ? 'success' : 'error');
+        // Enviar notificación al popup
         try {
           chrome.runtime.sendMessage({ type: 'SG_RESULT', result: result });
         } catch (e) {}
@@ -638,7 +638,7 @@
         done = true;
         clearTimeout(safety);
         try {
-          chrome.runtime.sendMessage({ type: 'SG_RESULT', result: { success: false, error: 'No URL for ' + type } });
+          chrome.runtime.sendMessage({ type: 'SG_RESULT', result: { success: false, error: 'No hay URL para ' + type } });
         } catch (e) {}
         return;
       }
@@ -656,7 +656,7 @@
         done = true;
         clearTimeout(safety);
         try {
-          chrome.runtime.sendMessage({ type: 'SG_RESULT', result: { success: ok, message: ok ? 'Downloaded!' : 'Download failed' } });
+          chrome.runtime.sendMessage({ type: 'SG_RESULT', result: { success: ok, message: ok ? '¡Descargado!' : 'Descarga fallida' } });
         } catch (e) {}
       });
     }).catch(function(e) {

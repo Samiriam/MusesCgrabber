@@ -1,4 +1,4 @@
-// Popup script for Score Grabber - receives logs from content script
+// Script del popup para Score Grabber - recibe registros del script de contenido
 
 (function() {
   'use strict';
@@ -54,7 +54,7 @@
       statusTextEl.textContent = msg;
       statusTextEl.style.color = isErr ? '#ff6b6b' : '#51cf66';
     }
-    addLog('STATUS: ' + msg, isErr ? 'error' : 'success');
+    addLog('ESTADO: ' + msg, isErr ? 'error' : 'success');
     setTimeout(function() { if (statusEl) statusEl.style.display = 'none'; }, 5000);
   }
 
@@ -66,35 +66,35 @@
         addLog('← Error: ' + chrome.runtime.lastError.message, 'error');
         cb(null);
       } else {
-        addLog('← Response', 'recv');
+        addLog('← Respuesta', 'recv');
         cb(response);
       }
     });
   }
 
   function handleAction(action) {
-    showStatus('Processing ' + action + '...');
+    showStatus('Procesando ' + action + '...');
     sendMessage(action, function(response) {
       if (response && response.success) {
-        showStatus(response.message || 'Success!');
+        showStatus(response.message || '¡Éxito!');
       } else {
-        showStatus((response && response.error) || 'Failed', true);
+        showStatus((response && response.error) || 'Falló', true);
       }
     });
   }
 
-  // Load saved log history from storage
+  // Cargar historial de registros guardados
   function loadLogHistory() {
     chrome.storage.local.get('sgLogHistory', function(result) {
       if (result.sgLogHistory && Array.isArray(result.sgLogHistory)) {
         result.sgLogHistory.forEach(function(entry) {
-          addLog('[INIT] ' + entry.msg, entry.type);
+          addLog('[INICIO] ' + entry.msg, entry.type);
         });
       }
     });
   }
   
-  // Listen for log messages from content script
+  // Escuchar mensajes de registro del script de contenido
   chrome.runtime.onMessage.addListener(function(message) {
     if (message && message.type === 'SG_LOG') {
       addLog('[CS] ' + message.msg, message.logType);
@@ -102,64 +102,64 @@
     if (message && message.type === 'SG_RESULT') {
       var result = message.result;
       if (result && result.success) {
-        showStatus(result.message || 'Success!');
+        showStatus(result.message || '¡Éxito!');
       } else {
-        showStatus((result && result.error) || 'Failed', true);
+        showStatus((result && result.error) || 'Falló', true);
       }
     }
   });
 
   function init() {
-    addLog('=== Score Grabber Started ===', 'info');
+    addLog('=== Score Grabber Iniciado ===', 'info');
     
-    // Load saved log history first
+    // Cargar historial de registros guardados primero
     loadLogHistory();
     
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
       if (!tabs || !tabs[0]) {
-        showError('No active tab');
+        showError('No hay pestaña activa');
         return;
       }
       currentTab = tabs[0];
       var url = currentTab.url || '';
-      addLog('Tab URL: ' + url, 'info');
+      addLog('URL de pestaña: ' + url, 'info');
 
       if (url.indexOf('musescore.com') === -1) {
-        showError('Not on MuseScore');
+        showError('No estás en MuseScore');
         return;
       }
 
       sendMessage('isConnectionOk', function(isReady) {
         if (!isReady) {
-          showError('Content script not ready - refresh page');
+          showError('Script de contenido no listo - recarga la página');
           return;
         }
-        addLog('Content script ready', 'success');
+        addLog('Script de contenido listo', 'success');
 
         sendMessage('getDebugInfo', function(info) {
           if (info) {
-            addLog('Token ready: ' + info.tokenReady, info.tokenReady ? 'success' : 'error');
-            addLog('Has randomToken: ' + info.hasRandomToken, info.hasRandomToken ? 'success' : 'error');
-            addLog('Has script: ' + info.hasScript, info.hasScript ? 'success' : 'error');
+            addLog('Token listo: ' + info.tokenReady, info.tokenReady ? 'success' : 'error');
+            addLog('Tiene randomToken: ' + info.hasRandomToken, info.hasRandomToken ? 'success' : 'error');
+            addLog('Tiene script: ' + info.hasScript, info.hasScript ? 'success' : 'error');
             if (info.tokenError) {
-              addLog('Token error: ' + info.tokenError, 'error');
+              addLog('Error de token: ' + info.tokenError, 'error');
             }
-            addLog('Captured tokens: ' + info.capturedTokensCount, 'info');
+            addLog('Tokens capturados: ' + info.capturedTokensCount, 'info');
           }
 
           sendMessage('isScorePage', function(isScore) {
             if (!isScore) {
-              showError('No score detected');
+              showError('No se detectó partitura');
               return;
             }
-            addLog('Score page detected', 'success');
+            addLog('Página de partitura detectada', 'success');
 
             sendMessage('getScoreInfo', function(scoreInfo) {
               if (scoreInfo) {
-                if (scoreTitleEl) scoreTitleEl.textContent = scoreInfo.scoreName || 'Unknown';
+                if (scoreTitleEl) scoreTitleEl.textContent = scoreInfo.scoreName || 'Desconocido';
                 if (scoreComposerEl) scoreComposerEl.textContent = scoreInfo.scoreComposer || '';
-                if (scoreIdDisplayEl) scoreIdDisplayEl.textContent = 'ID: ' + (scoreInfo.scoreId || 'none');
-                addLog('Score: ' + scoreInfo.scoreName + ' (ID: ' + scoreInfo.scoreId + ')', 'info');
+                if (scoreIdDisplayEl) scoreIdDisplayEl.textContent = 'ID: ' + (scoreInfo.scoreId || 'ninguno');
+                addLog('Partitura: ' + scoreInfo.scoreName + ' (ID: ' + scoreInfo.scoreId + ')', 'info');
               }
               showContent();
             });

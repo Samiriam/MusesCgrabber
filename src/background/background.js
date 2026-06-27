@@ -1,4 +1,4 @@
-// Background Service Worker - Score Grabber
+// Service Worker de Fondo - Score Grabber
 
 var tokenCache = {};
 
@@ -16,7 +16,7 @@ function checkForUpdates() {
   return fetch('https://api.github.com/repos/ingui-n/musescore-downloader/releases/latest', {
     headers: { 'Accept': 'application/vnd.github.v3+json' }
   }).then(function(r) {
-    if (!r.ok) throw new Error('API error');
+    if (!r.ok) throw new Error('Error de API');
     return r.json();
   }).then(function(release) {
     var latest = (release.tag_name || '0.0.0').replace('v', '');
@@ -113,7 +113,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   }
 });
 
-console.log('[Score Grabber] Background initialized');
+console.log('[Score Grabber] Fondo inicializado');
 
 setTimeout(function() {
   checkForUpdates();

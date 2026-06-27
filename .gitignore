@@ -22,3 +22,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Private work logs
+PLAN_TRABAJO.md

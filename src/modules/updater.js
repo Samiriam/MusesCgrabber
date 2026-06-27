@@ -1,6 +1,6 @@
-// Auto-update checker for MuseScore Downloader Extension
+// Verificador de actualizaciones automáticas para la extensión MuseScore Downloader
 
-const UPDATE_CHECK_INTERVAL = 6 * 60 * 60 * 1000; // 6 hours
+const UPDATE_CHECK_INTERVAL = 6 * 60 * 60 * 1000; // 6 horas
 
 class UpdateChecker {
   constructor(config = {}) {
@@ -12,14 +12,14 @@ class UpdateChecker {
     this.checkInterval = null;
   }
 
-  // Start periodic update checks
+  // Iniciar verificaciones periódicas de actualizaciones
   start() {
-    this.checkNow(); // Check immediately
+    this.checkNow(); // Verificar inmediatamente
     this.checkInterval = setInterval(() => this.checkNow(), UPDATE_CHECK_INTERVAL);
-    console.log('[UpdateChecker] Started, checking every 6 hours');
+    console.log('[UpdateChecker] Iniciado, verificando cada 6 horas');
   }
 
-  // Stop periodic checks
+  // Detener verificaciones periódicas
   stop() {
     if (this.checkInterval) {
       clearInterval(this.checkInterval);
@@ -27,10 +27,10 @@ class UpdateChecker {
     }
   }
 
-  // Check for updates now
+  // Verificar actualizaciones ahora
   async checkNow() {
     try {
-      console.log('[UpdateChecker] Checking for updates...');
+      console.log('[UpdateChecker] Verificando actualizaciones...');
       
       const response = await fetch(this.githubApiUrl, {
         headers: {
@@ -40,7 +40,7 @@ class UpdateChecker {
       });
 
       if (!response.ok) {
-        throw new Error(`GitHub API error: ${response.status}`);
+        throw new Error(`Error de API GitHub: ${response.status}`);
       }
 
       const release = await response.json();
@@ -56,46 +56,46 @@ class UpdateChecker {
         checkedAt: new Date().toISOString()
       };
 
-      // Compare versions
+      // Comparar versiones
       updateInfo.available = this.isNewerVersion(
         updateInfo.currentVersion,
         updateInfo.latestVersion
       );
 
-      // Store update info
+      // Guardar información de actualización
       await chrome.storage.local.set({ [this.storageKey]: updateInfo });
 
-      // Show notification if update available
+      // Mostrar notificación si hay actualización disponible
       if (updateInfo.available) {
         this.showNotification(updateInfo);
       }
 
-      console.log('[UpdateChecker] Result:', updateInfo);
+      console.log('[UpdateChecker] Resultado:', updateInfo);
       return updateInfo;
 
     } catch (error) {
-      console.error('[UpdateChecker] Check failed:', error);
+      console.error('[UpdateChecker] Verificación fallida:', error);
       return { available: false, error: error.message };
     }
   }
 
-  // Get download URL for the extension from release assets
+  // Obtener URL de descarga de la extensión desde los assets del release
   getDownloadUrl(release) {
     if (!release.assets || release.assets.length === 0) {
       return release.html_url;
     }
 
-    // Look for ZIP file (Chrome/Edge)
+    // Buscar archivo ZIP (Chrome/Edge)
     const zipAsset = release.assets.find(a => 
       a.name.endsWith('.zip') && a.name.includes('manifest-v3')
     );
     if (zipAsset) return zipAsset.browser_download_url;
 
-    // Fallback to first asset
+    // Usar primer asset como respaldo
     return release.assets[0].browser_download_url;
   }
 
-  // Compare semantic versions
+  // Comparar versiones semánticas
   isNewerVersion(current, latest) {
     const currentParts = current.split('.').map(Number);
     const latestParts = latest.split('.').map(Number);
@@ -107,33 +107,33 @@ class UpdateChecker {
     return false;
   }
 
-  // Show browser notification
+  // Mostrar notificación del navegador
   showNotification(updateInfo) {
     if (chrome.notifications) {
       chrome.notifications.create('update-available', {
         type: 'basic',
         iconUrl: 'icons/icon-128.png',
-        title: 'MuseScore Downloader Update',
-        message: `Version ${updateInfo.latestVersion} is available (current: ${updateInfo.currentVersion})`,
-        buttons: [{ title: 'View Update' }],
+        title: 'Actualización de MuseScore Downloader',
+        message: `Versión ${updateInfo.latestVersion} disponible (actual: ${updateInfo.currentVersion})`,
+        buttons: [{ title: 'Ver actualización' }],
         requireInteraction: true
       });
     }
   }
 
-  // Get stored update info
+  // Obtener información de actualización almacenada
   async getStoredInfo() {
     const result = await chrome.storage.local.get(this.storageKey);
     return result[this.storageKey] || null;
   }
 
-  // Force check and return promise
+  // Forzar verificación y devolver promesa
   async forceCheck() {
     return await this.checkNow();
   }
 }
 
-// Export for use in background.js
+// Exportar para usar en background.js
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = UpdateChecker;
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +10,11 @@
   <div id="app">
     <div class="header">
       <h1 class="title">Score Grabber</h1>
-      <button id="btn-debug" class="btn-icon" title="Toggle debug">🔧</button>
+      <button id="btn-debug" class="btn-icon" title="Mostrar/ocultar depuración">🔧</button>
     </div>
 
     <div id="loading" class="message">
-      <p>Loading...</p>
+      <p>Cargando...</p>
     </div>
 
     <div id="error" class="message" style="display: none;">
@@ -33,17 +33,17 @@
       </div>
 
       <div class="buttons">
-        <button id="btn-midi" class="btn">Download MIDI</button>
-        <button id="btn-mp3" class="btn">Download MP3</button>
-        <button id="btn-pdf" class="btn">Download PDF</button>
-        <button id="btn-sheet" class="btn btn-secondary">Open Sheet</button>
+        <button id="btn-midi" class="btn">Descargar MIDI</button>
+        <button id="btn-mp3" class="btn">Descargar MP3</button>
+        <button id="btn-pdf" class="btn">Descargar PDF</button>
+        <button id="btn-sheet" class="btn btn-secondary">Ver partitura</button>
       </div>
     </div>
 
     <div id="debug-panel" class="debug-panel" style="display: none;">
       <div class="debug-header">
-        <h3>Debug Log</h3>
-        <button id="btn-clear-log" class="btn-small">Clear</button>
+        <h3>Registro de depuración</h3>
+        <button id="btn-clear-log" class="btn-small">Limpiar</button>
       </div>
       <div id="debug-log" class="debug-log"></div>
     </div>

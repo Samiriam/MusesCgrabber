@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Score Grabber",
   "version": "1.0.0",
-  "description": "Download sheet music from MuseScore",
+  "description": "Descargar partituras de MuseScore",
   "action": {
     "default_popup": "popup.html"
   },
