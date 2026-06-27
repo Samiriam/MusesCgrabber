@@ -1,19 +1,10 @@
 {
   "name": "score-grabber",
   "version": "1.0.0",
-  "description": "Extensión para descargar partituras, audio y archivos MIDI de MuseScore",
+  "description": "Extensión para descargar partituras de MuseScore",
   "main": "src/background/background.js",
   "scripts": {
-    "start": "echo 'Load src/ folder as unpacked extension'",
-    "build": "echo 'No build required - load src/ directly'"
+    "start": "echo 'Load src/ folder as unpacked extension'"
   },
-  "keywords": [
-    "musescore",
-    "extension",
-    "download",
-    "sheet-music",
-    "midi"
-  ],
-  "author": "",
-  "license": "MIT"
+  "private": true
 }
