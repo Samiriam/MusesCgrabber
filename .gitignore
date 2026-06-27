@@ -9,9 +9,7 @@ temp_final/
 temp_final2/
 temp_final3/
 
-# Packaged extensions
-*.zip
-*.xpi
+# Packaged extensions (excepto los oficiales)
 
 # OS files
 .DS_Store
