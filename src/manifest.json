@@ -7,8 +7,7 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "service_worker": "background.js",
-    "scripts": ["background.js"]
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
@@ -27,11 +26,5 @@
   ],
   "sandbox": {
     "pages": ["sandbox.html"]
-  },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "score-grabber@musescore",
-      "strict_min_version": "109.0"
-    }
   }
 }

@@ -24,7 +24,9 @@ Extensión de navegador para descargar partituras, archivos de audio y MIDI de M
 
 1. Abrir `about:debugging#/runtime/this-firefox`
 2. Hacer clic en "Cargar complemento temporal"
-3. Seleccionar `src/manifest.json`
+3. Seleccionar el archivo `manifest.json` de la carpeta `firefox`
+
+**Nota:** La carpeta `firefox` contiene una versión preparada para Firefox con las configuraciones necesarias.
 
 ## Cómo Funciona
 
@@ -40,24 +42,23 @@ La extensión intercepta tokens de las llamadas API internas de MuseScore y los 
 ## Estructura del Proyecto
 
 ```
-src/
-├── manifest.json          # Configuración de la extensión (Manifest V3)
-├── background/
-│   └── background.js      # Service worker para interceptar tokens
-├── content/
-│   ├── content.js         # Lógica principal de la extensión
-│   └── content.css        # Estilos para elementos inyectados
-├── popup/
-│   ├── popup.html         # Interfaz del popup
-│   ├── popup.js           # Lógica del popup
-│   └── popup.css          # Estilos del popup
-├── sandbox/
-│   ├── sandbox.html       # Página aislada para ejecución segura
-│   └── sandbox.js         # Generación de tokens en sandbox
-├── modules/
-│   └── updater.js         # Sistema de actualizaciones automáticas
-├── pdfmake.min.js         # Librería para generación de PDF
-└── vfs_fonts.js           # Fuentes para PDF
+score-grabber/
+├── src/                    # Versión para Chrome/Edge
+│   ├── manifest.json       # Configuración Manifest V3 (Chrome)
+│   ├── background/
+│   ├── content/
+│   ├── popup/
+│   ├── sandbox/
+│   └── modules/
+├── firefox/                # Versión para Firefox
+│   ├── manifest.json       # Configuración Manifest V3 (Firefox)
+│   ├── background/
+│   ├── content/
+│   ├── popup/
+│   ├── sandbox/
+│   └── modules/
+├── README.md               # Este archivo
+└── package.json
 ```
 
 ## Desarrollo
